@@ -27,7 +27,7 @@ jobs:
       run: python weekly.py > output.txt 2>&1
 
     - name: Send Telegram report
-      uses: appleboy/telegram-action@master
+      uses: appleboy/telegram-action@v0.1.1
       with:
         to: ${{ secrets.TELEGRAM_CHAT_ID }}
         token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
