@@ -4,13 +4,20 @@ import numpy as np
 import time
 from bs4 import BeautifulSoup
 import requests
+import logging
+import warnings
+
+# Suppress all warnings and logging
+warnings.filterwarnings('ignore')
+logging.getLogger('yfinance').setLevel(logging.ERROR)
+logging.getLogger('urllib3').setLevel(logging.ERROR)
 
 def fetch_screener_data(base_url, max_pages=5):
     columns = ['S.No.', 'Symbol', 'CMP Rs.', 'P/E', 'Mar Cap Rs.Cr.', 'Div Yld %', 'NP Qtr Rs.Cr.', 'Qtr Profit Var %', 'Sales Qtr Rs.Cr.', 'Qtr Sales Var %', 'ROCE %', '1Yr return %', 'Vol 1d']
     data = pd.DataFrame()
     for page in range(1, max_pages+1):
         url = f'{base_url}?page={page}'
-        print(f'Loading Screener page: {url}')
+        # print(f'Loading Screener page: {url}')  # Commented out for cleaner output
         try:
             response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
             soup = BeautifulSoup(response.text, 'html.parser')
@@ -37,7 +44,7 @@ def fetch_screener_data(base_url, max_pages=5):
             if len(page_data) < 20:
                 break
         except Exception as e:
-            print(f'Error reading {url}:', e)
+            # print(f'Error reading {url}:', e)  # Commented out for cleaner output
             break
     data = data.reset_index(drop=True)
     return data
@@ -62,8 +69,8 @@ INDEX_SYMBOL = '^NSEI'
 print("Fetching stock list & fundamentals from Screener...")
 df_fund = fetch_screener_data(SCREENER_SCREEN_URL, max_pages=20)
 print(f"{len(df_fund)} stocks loaded.")
-print(f"Columns: {list(df_fund.columns)}")
-print("Sample symbols:", df_fund['Symbol'].head().tolist())
+# print(f"Columns: {list(df_fund.columns)}")  # Commented out for cleaner output
+# print("Sample symbols:", df_fund['Symbol'].head().tolist())  # Commented out for cleaner output
 
 if df_fund.empty:
     print("No data loaded from Screener. Please check the URL and ensure the screen exists and is public.")
@@ -93,7 +100,7 @@ for i, row in df_fund.iterrows():
         df = yf.download(symbol, period='16wk', interval='1d', auto_adjust=False)
         if isinstance(df.columns, pd.MultiIndex):
             df.columns = df.columns.droplevel(1)  # drop Ticker level
-        print(f"Processing {symbol}")
+        # print(f"Processing {symbol}")  # Commented out for cleaner output
         if len(df) < LOOKBACK_12W:
             continue
         close = df['Close'].dropna().astype(float)
@@ -106,7 +113,7 @@ for i, row in df_fund.iterrows():
             ticker = yf.Ticker(symbol)
             sector = ticker.info.get('sector', 'Unknown')
         except Exception as e:
-            print(f"Error fetching sector for {symbol}: {e}")
+            # print(f"Error fetching sector for {symbol}: {e}")  # Commented out for cleaner output
             sector = 'Unknown'
 
         roc_4w = (close.iloc[-1] - close.iloc[-LOOKBACK_4W]) / close.iloc[-LOOKBACK_4W] * 100
@@ -140,7 +147,8 @@ for i, row in df_fund.iterrows():
             'key_catalyst': f"{sector}, 52-wk breakout: {high_breakout}, RSI: {round(rsi,1)}"
         })
     except Exception as e:
-        print(f"Error for {symbol}: {e}")
+        # print(f"Error for {symbol}: {e}")  # Commented out for cleaner output
+        pass
 
 # Removed the break to process all qualifying stocks
 
