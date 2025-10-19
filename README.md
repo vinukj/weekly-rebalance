@@ -22,7 +22,7 @@ This script fetches stocks from Screener.in, calculates momentum scores based on
 
 ## Automated Weekly Reports
 
-The script is set up to run automatically every Friday at 8 PM IST via GitHub Actions, sending an email report.
+The script is set up to run automatically every Friday at 8 PM IST via GitHub Actions, sending a report to a Telegram channel.
 
 ### Setup GitHub Repository
 
@@ -34,15 +34,14 @@ The script is set up to run automatically every Friday at 8 PM IST via GitHub Ac
    git push -u origin main
    ```
 
-### Configure Email Secrets
+### Configure Telegram Secrets
 
 In your GitHub repository settings, go to Secrets and Variables > Actions, and add the following secrets:
 
-- `EMAIL_USERNAME`: Your Gmail address (e.g., yourname@gmail.com)
-- `EMAIL_PASSWORD`: Your Gmail app password (not your regular password)
-- `RECIPIENT_EMAIL`: The email address to receive the reports
+- `TELEGRAM_BOT_TOKEN`: Your Telegram bot token (e.g., 5882732230:AAE5e3XlDU7ckuGbWLIavfGyuzpQTnSD5jE)
+- `TELEGRAM_CHAT_ID`: The chat ID of your Telegram channel (e.g., -1001848013789)
 
-**Note:** For Gmail, you need to enable 2-factor authentication and generate an app password.
+**Note:** Ensure your bot is added to the channel and has permission to send messages/documents.
 
 ### Workflow Details
 
@@ -51,7 +50,7 @@ In your GitHub repository settings, go to Secrets and Variables > Actions, and a
   - Sets up Python 3.10
   - Installs dependencies
   - Runs the script and captures output
-  - Sends email with output attached
+  - Sends Telegram message with output file attached
 
 You can also trigger the workflow manually from the Actions tab.
 
