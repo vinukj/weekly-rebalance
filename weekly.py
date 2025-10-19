@@ -151,8 +151,10 @@ if not df_results.empty:
     if not df_results.empty:
         df_results = df_results.sort_values(by='momentum_score', ascending=False)
         df_results['rank'] = range(1, len(df_results) + 1)
-        print("\nTop 10 momentum stocks for next week:")
-        print(df_results[['rank', 'symbol', 'current_price', '1w_return_%', 'sector', 'momentum_score', 'roc_4w', 'key_catalyst']].head(10).to_string(index=False))
+        print("****Top 10 Momentum Stocks for next week****")
+        top_10 = df_results.head(10)
+        for idx, row in top_10.iterrows():
+            print(f"{int(row['rank'])}. {row['symbol']} : {row['momentum_score']}")
     else:
         print("No valid stocks found after filtering.")
 else:
